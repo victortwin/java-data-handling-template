@@ -25,6 +25,14 @@ public class SimpleBigNumbersService implements BigNumbersService {
      */
     @Override
     public BigInteger getPrimaryNumber(int range) {
-        return null;
+        BigInteger bigInteger = new BigInteger("2");
+        int i = 0;
+        while (i <= range) {
+            if(bigInteger.isProbablePrime(10)) {
+                i++;
+            }
+            bigInteger = bigInteger.add(BigInteger.ONE);
+        }
+        return bigInteger.subtract(BigInteger.ONE);
     }
 }
