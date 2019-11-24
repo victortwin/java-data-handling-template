@@ -3,8 +3,10 @@ package com.epam.izh.rd.online.repository;
 import java.io.File;
 
 public class SimpleFileRepository implements FileRepository {
-    private int counter = 0;
-    private boolean isFirstTime = true;
+    private int fileCounter = 0;
+    private int dirCounter = 0;
+    private boolean isFirstTimeFile = true;
+    private boolean isFirstTimeDir = true;
 
     /**
      * Метод рекурсивно подсчитывает количество файлов в директории
@@ -14,22 +16,23 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countFilesInDirectory(String path) {
-
         File file = new File(path);
-        if (isFirstTime) {
+        if (isFirstTimeFile) {
             file = new File("./src/main/resources/" + path); //прошу прощения за этот костыль, не разобрался с путями
-            isFirstTime = false;
+            isFirstTimeFile = false;
         }
         File[] listFiles = file.listFiles();
         if (listFiles != null){
             for (File listFile : listFiles) {
-                if (!listFile.isDirectory())
-                    counter++;
-                if (listFile.isDirectory())
+                if (!listFile.isDirectory()) {
+                    fileCounter++;
+                }
+                if (listFile.isDirectory()) {
                     countFilesInDirectory(listFile.getPath());
+                }
             }
         }
-        return counter;
+        return fileCounter;
     }
 
     /**
@@ -40,7 +43,24 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countDirsInDirectory(String path) {
-        return 0;
+        File file = new File(path);
+        if (isFirstTimeDir) {
+            file = new File("./src/main/resources/" + path); //прошу прощения за этот костыль, не разобрался с путями
+            if(file.isDirectory()) {
+                dirCounter++;
+            }
+            isFirstTimeDir = false;
+        }
+        File[] listFiles = file.listFiles();
+        if (listFiles != null){
+            for (File listFile : listFiles) {
+                if (listFile.isDirectory()) {
+                    dirCounter++;
+                    countDirsInDirectory(listFile.getPath());
+                }
+            }
+        }
+        return dirCounter;
     }
 
     /**
