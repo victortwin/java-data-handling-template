@@ -1,6 +1,10 @@
 package com.epam.izh.rd.online.repository;
 
+import java.io.File;
+
 public class SimpleFileRepository implements FileRepository {
+    private int counter = 0;
+    private boolean isFirstTime = true;
 
     /**
      * Метод рекурсивно подсчитывает количество файлов в директории
@@ -10,7 +14,22 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countFilesInDirectory(String path) {
-        return 0;
+
+        File file = new File(path);
+        if (isFirstTime) {
+            file = new File("./src/main/resources/" + path); //прошу прощения за этот костыль, не разобрался с путями
+            isFirstTime = false;
+        }
+        File[] listFiles = file.listFiles();
+        if (listFiles != null){
+            for (File listFile : listFiles) {
+                if (!listFile.isDirectory())
+                    counter++;
+                if (listFile.isDirectory())
+                    countFilesInDirectory(listFile.getPath());
+            }
+        }
+        return counter;
     }
 
     /**
