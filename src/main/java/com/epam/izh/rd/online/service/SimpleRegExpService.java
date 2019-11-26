@@ -17,7 +17,7 @@ public class SimpleRegExpService implements RegExpService {
     public String maskSensitiveData() {
         String string = "";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("./src/main/resources/sensitive_data.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/sensitive_data.txt"));
             string = reader.readLine();
             reader.close();
             Pattern pattern = Pattern.compile("\\d{4}\\s\\d{4}\\s\\d{4}\\s\\d{4}");
@@ -46,7 +46,7 @@ public class SimpleRegExpService implements RegExpService {
     @Override
     public String replacePlaceholders(double paymentAmount, double balance) {
         String string = "";
-        try (BufferedReader reader = new BufferedReader(new FileReader("./src/main/resources/sensitive_data.txt"));) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/sensitive_data.txt"));) {
             string = reader.readLine();
             reader.close();
             Pattern pattern = Pattern.compile("\\$\\{.+?}");
