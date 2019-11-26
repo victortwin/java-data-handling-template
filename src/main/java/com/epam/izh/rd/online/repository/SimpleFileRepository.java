@@ -1,8 +1,8 @@
 package com.epam.izh.rd.online.repository;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 
 public class SimpleFileRepository implements FileRepository {
     private int fileCounter = 0;
@@ -18,16 +18,9 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countFilesInDirectory(String path) {
-//        File file = new File(path);
-//        if (isFirstTimeFile) {
-//            file = new File("./src/main/resources/" + path); //прошу прощения за этот костыль, не разобрался с путями
-//            isFirstTimeFile = false;
-//        }
         File file = new File(path);
         if (isFirstTimeFile) {
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL resource = classLoader.getResource(path);
-            file = new File(resource.getFile());
+            file = new File("src/main/resources/" + path);
             isFirstTimeFile = false;
         }
         File[] listFiles = file.listFiles();
@@ -52,20 +45,10 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countDirsInDirectory(String path) {
-//        File file = new File(path);
-//        if (isFirstTimeDir) {
-//            file = new File("./src/main/resources/" + path);
-//            if(file.isDirectory()) {
-//                dirCounter++;
-//            }
-//            isFirstTimeDir = false;
-//        }
         File file = new File(path);
         if (isFirstTimeDir) {
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL resource = classLoader.getResource(path);
-            file = new File(resource.getFile());
-            if (file.isDirectory()) {
+            file = new File("src/main/resources/" + path);
+            if(file.isDirectory()) {
                 dirCounter++;
             }
             isFirstTimeDir = false;
@@ -90,7 +73,19 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public void copyTXTFiles(String from, String to) {
-        return;
+        File fileFrom = new File(from);
+        File fileTo = new File(to);
+        fileTo.mkdirs();
+        File[] listFiles = fileFrom.listFiles();
+        for (File listFile : listFiles) {
+            if (listFile.getName().endsWith(".txt")) {
+                try {
+                    Files.copy(listFile.toPath(), new File(to + "/" + listFile.getName()).toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
@@ -102,9 +97,6 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public boolean createFile(String path, String name) {
-//        File filePath = new File("./src/main/resources/" + path);
-//        filePath.mkdir();
-//        File file = new File(filePath, name + ".txt");
         ClassLoader classLoader = getClass().getClassLoader();
         URL resource = classLoader.getResource(path);
 
@@ -129,6 +121,17 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public String readFileFromResources(String fileName) {
-        return null;
+        StringBuilder result = new StringBuilder();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/" + fileName));
+            while (reader.ready()) {
+                result.append(reader.readLine());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result.toString();
     }
 }
