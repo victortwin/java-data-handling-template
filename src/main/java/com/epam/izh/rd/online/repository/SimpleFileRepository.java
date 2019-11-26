@@ -1,6 +1,8 @@
 package com.epam.izh.rd.online.repository;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class SimpleFileRepository implements FileRepository {
     private int fileCounter = 0;
@@ -16,9 +18,16 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countFilesInDirectory(String path) {
+//        File file = new File(path);
+//        if (isFirstTimeFile) {
+//            file = new File("./src/main/resources/" + path); //прошу прощения за этот костыль, не разобрался с путями
+//            isFirstTimeFile = false;
+//        }
         File file = new File(path);
         if (isFirstTimeFile) {
-            file = new File("./src/main/resources/" + path); //прошу прощения за этот костыль, не разобрался с путями
+            ClassLoader classLoader = getClass().getClassLoader();
+            URL resource = classLoader.getResource(path);
+            file = new File(resource.getFile());
             isFirstTimeFile = false;
         }
         File[] listFiles = file.listFiles();
@@ -43,10 +52,20 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countDirsInDirectory(String path) {
+//        File file = new File(path);
+//        if (isFirstTimeDir) {
+//            file = new File("./src/main/resources/" + path);
+//            if(file.isDirectory()) {
+//                dirCounter++;
+//            }
+//            isFirstTimeDir = false;
+//        }
         File file = new File(path);
         if (isFirstTimeDir) {
-            file = new File("./src/main/resources/" + path); //прошу прощения за этот костыль, не разобрался с путями
-            if(file.isDirectory()) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            URL resource = classLoader.getResource(path);
+            file = new File(resource.getFile());
+            if (file.isDirectory()) {
                 dirCounter++;
             }
             isFirstTimeDir = false;
@@ -83,7 +102,23 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public boolean createFile(String path, String name) {
-        return false;
+//        File filePath = new File("./src/main/resources/" + path);
+//        filePath.mkdir();
+//        File file = new File(filePath, name + ".txt");
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource(path);
+
+        File filePath = new File(resource.getFile());
+        filePath.mkdir();
+        File file = new File(filePath, name);
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file.exists();
+
     }
 
     /**
