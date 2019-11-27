@@ -122,8 +122,7 @@ public class SimpleFileRepository implements FileRepository {
     @Override
     public String readFileFromResources(String fileName) {
         StringBuilder result = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/" + fileName));
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/" + fileName))) {
             while (reader.ready()) {
                 result.append(reader.readLine());
             }
