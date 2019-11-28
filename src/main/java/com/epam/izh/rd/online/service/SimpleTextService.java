@@ -13,7 +13,7 @@ public class SimpleTextService implements TextService {
      */
     @Override
     public String removeString(String base, String remove) {
-        return null; //TODO
+        return base.replaceAll(remove, "");
     }
 
     /**
@@ -24,7 +24,11 @@ public class SimpleTextService implements TextService {
      */
     @Override
     public boolean isQuestionString(String text) {
-        return false; //TODO
+        if (text.isEmpty()) {
+            return false;
+        }
+        char[] array = text.toCharArray();
+        return array[text.length() - 1] == '?';
     }
 
     /**
@@ -35,7 +39,11 @@ public class SimpleTextService implements TextService {
      */
     @Override
     public String concatenate(String... elements) {
-        return null; //TODO
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s: elements) {
+            stringBuilder.append(s);
+        }
+        return stringBuilder.toString();
     }
 
     /**
@@ -47,7 +55,19 @@ public class SimpleTextService implements TextService {
      */
     @Override
     public String toJumpCase(String text) {
-        return null; //TODO
+        String[] array = text.split("");
+        for (int i = 0; i < text.length(); i++) {
+            if (i % 2 == 0) {
+                array[i] = array[i].toLowerCase();
+            } else {
+                array[i] = array[i].toUpperCase();
+            }
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s : array) {
+            stringBuilder.append(s);
+        }
+        return stringBuilder.toString();
     }
 
     /**
@@ -59,6 +79,12 @@ public class SimpleTextService implements TextService {
      */
     @Override
     public boolean isPalindrome(String string) {
-       return false; //TODO
+       if (string.isEmpty()) {
+           return false;
+       }
+       StringBuilder stringBuilder = new StringBuilder(string.replaceAll(" ", "").toLowerCase());
+       String reverse = stringBuilder.reverse().toString();
+       string = string.replaceAll(" ", "").toLowerCase();
+       return reverse.equals(string);
     }
 }
